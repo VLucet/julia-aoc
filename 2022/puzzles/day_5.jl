@@ -11,6 +11,8 @@ move 1 from 1 to 2";
 
 input = read("2022/inputs/day_5.txt", String);
 
+# Part 1
+
 function get_initial_state(input)
     raw = split(input, "\n\n")[1]
     raw_arr = collect.(split(raw, "\n"))
@@ -40,11 +42,34 @@ function run_insts(state, insts)
         for _ in 1:the_int[1]
             push!(state[the_int[3]], 
                   pop!(state[the_int[2]]))
-            println(state)
+            # println(state)
         end
         run_insts(state, insts[2:end])
     end
 end
 
 run_insts(state, insts)
+map(x -> last(x), state) |> join
+
+# Part 2
+
+state = get_initial_state(input)
+
+function run_insts_2(state, insts)
+    if length(insts) == 0
+        println("reached end state")
+        return(state)
+    else 
+        the_int = insts[1]
+        for i in the_int[1]:-1:1
+            push!(state[the_int[3]], 
+                  popat!(state[the_int[2]],
+                         length(state[the_int[2]]) - (i-1)))
+            # println(state)
+        end
+        run_insts_2(state, insts[2:end])
+    end
+end
+
+run_insts_2(state, insts)
 map(x -> last(x), state) |> join
